@@ -1,0 +1,111 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    xmlns:tools="http://schemas.android.com/tools"
+4    package="com.murattarslan.myautoapp.shared" >
+5
+6    <uses-sdk android:minSdkVersion="28" />
+7
+8    <uses-permission android:name="androidx.car.app.MEDIA_TEMPLATES" />
+8-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:4:5-71
+8-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:4:22-69
+9    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+9-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:6:5-77
+9-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:6:22-74
+10    <uses-permission android:name="android.permission.INTERNET" />
+10-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:7:5-67
+10-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:7:22-64
+11    <uses-permission
+11-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:8:5-9:51
+12        android:name="android.permission.FOREGROUND_SERVICE"
+12-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:8:22-74
+13        tools:ignore="ForegroundServicesPolicy" />
+13-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:9:9-48
+14    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+14-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:10:5-92
+14-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:10:22-89
+15
+16    <application android:appCategory="audio" >
+16-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:12:5-55:19
+16-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:12:18-45
+17        <meta-data
+17-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:14:9-16:33
+18            android:name="androidx.car.app.minCarApiLevel"
+18-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:15:13-59
+19            android:value="1" />
+19-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:16:13-30
+20        <meta-data
+20-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:18:9-20:59
+21            android:name="com.google.android.gms.car.application"
+21-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:19:13-66
+22            android:resource="@xml/automotive_app_desc" />
+22-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:20:13-56
+23
+24        <service
+24-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:22:9-31:19
+25            android:name="com.murattarslan.myautoapp.shared.MyCarAppService"
+25-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:23:13-44
+26            android:exported="true" >
+26-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:24:13-36
+27            <intent-filter>
+27-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:25:13-30:29
+28                <action android:name="androidx.car.app.CarAppService" />
+28-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:26:17-73
+28-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:26:25-70
+29
+30                <category android:name="androidx.car.app.category.POI" />
+30-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:27:17-74
+30-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:27:27-71
+31                <category android:name="androidx.car.app.category.MEDIA" />
+31-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:28:17-76
+31-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:28:27-73
+32                <category android:name="androidx.car.app.category.AUDIO" />
+32-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:29:17-75
+32-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:29:27-73
+33            </intent-filter>
+34        </service>
+35
+36        <!--
+37         Main music service, provides media browsing and media playback services to
+38         consumers through MediaBrowserService and MediaSession. Consumers connect to it through
+39         MediaBrowser (for browsing) and MediaController (for playback control)
+40        -->
+41        <service
+41-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:36:9-47:19
+42            android:name="com.murattarslan.myautoapp.shared.MyMusicService"
+42-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:37:13-43
+43            android:exported="true"
+43-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:40:13-36
+44            android:foregroundServiceType="mediaPlayback"
+44-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:38:13-58
+45            android:permission="android.permission.BIND_MEDIA_BROWSER_SERVICE" >
+45-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:39:13-79
+46            <intent-filter>
+46-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:41:13-43:29
+47                <action android:name="android.media.browse.MediaBrowserService" />
+47-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:42:17-83
+47-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:42:25-80
+48            </intent-filter>
+49            <intent-filter>
+49-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:44:13-46:29
+50                <action android:name="android.intent.action.MEDIA_BUTTON" />
+50-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:45:17-77
+50-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:45:25-74
+51            </intent-filter>
+52        </service>
+53
+54        <receiver
+54-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:49:9-54:20
+55            android:name="androidx.media.session.MediaButtonReceiver"
+55-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:49:19-76
+56            android:exported="true" >
+56-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:50:13-36
+57            <intent-filter>
+57-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:44:13-46:29
+58                <action android:name="android.intent.action.MEDIA_BUTTON" />
+58-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:45:17-77
+58-->/Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:45:25-74
+59            </intent-filter>
+60        </receiver>
+61    </application>
+62
+63</manifest>

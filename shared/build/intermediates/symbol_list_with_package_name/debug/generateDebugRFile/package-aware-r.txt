@@ -1,0 +1,2 @@
+com.murattarslan.myautoapp.shared
+xml automotive_app_desc

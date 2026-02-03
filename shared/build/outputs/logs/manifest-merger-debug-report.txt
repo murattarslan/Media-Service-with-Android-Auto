@@ -1,0 +1,108 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:1:1-57:12
+INJECTED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:1:1-57:12
+	package
+		INJECTED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml
+	xmlns:tools
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:1:11-57
+	xmlns:android
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:2:5-63
+uses-permission#androidx.car.app.MEDIA_TEMPLATES
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:4:5-71
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:4:22-69
+uses-permission#android.permission.POST_NOTIFICATIONS
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:6:5-77
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:6:22-74
+uses-permission#android.permission.INTERNET
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:7:5-67
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:7:22-64
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:8:5-9:51
+	tools:ignore
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:9:9-48
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:8:22-74
+uses-permission#android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:10:5-92
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:10:22-89
+application
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:12:5-55:19
+	android:appCategory
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:12:18-45
+meta-data#androidx.car.app.minCarApiLevel
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:14:9-16:33
+	android:value
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:16:13-30
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:15:13-59
+meta-data#com.google.android.gms.car.application
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:18:9-20:59
+	android:resource
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:20:13-56
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:19:13-66
+service#com.murattarslan.myautoapp.shared.MyCarAppService
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:22:9-31:19
+	android:exported
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:24:13-36
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:23:13-44
+intent-filter#action:name:androidx.car.app.CarAppService+category:name:androidx.car.app.category.AUDIO+category:name:androidx.car.app.category.MEDIA+category:name:androidx.car.app.category.POI
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:25:13-30:29
+action#androidx.car.app.CarAppService
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:26:17-73
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:26:25-70
+category#androidx.car.app.category.POI
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:27:17-74
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:27:27-71
+category#androidx.car.app.category.MEDIA
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:28:17-76
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:28:27-73
+category#androidx.car.app.category.AUDIO
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:29:17-75
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:29:27-73
+service#com.murattarslan.myautoapp.shared.MyMusicService
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:36:9-47:19
+	android:exported
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:40:13-36
+	android:permission
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:39:13-79
+	android:foregroundServiceType
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:38:13-58
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:37:13-43
+intent-filter#action:name:android.media.browse.MediaBrowserService
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:41:13-43:29
+action#android.media.browse.MediaBrowserService
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:42:17-83
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:42:25-80
+intent-filter#action:name:android.intent.action.MEDIA_BUTTON
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:44:13-46:29
+action#android.intent.action.MEDIA_BUTTON
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:45:17-77
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:45:25-74
+receiver#androidx.media.session.MediaButtonReceiver
+ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:49:9-54:20
+	android:exported
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:50:13-36
+	android:name
+		ADDED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml:49:19-76
+uses-sdk
+INJECTED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml
+INJECTED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/muratarslan/AndroidStudioProjects/MyAutoApp/shared/src/main/AndroidManifest.xml
