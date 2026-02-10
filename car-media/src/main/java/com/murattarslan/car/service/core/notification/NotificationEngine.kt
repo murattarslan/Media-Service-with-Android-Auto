@@ -1,0 +1,9 @@
+package com.murattarslan.car.service.core.notification
+
+import android.graphics.Bitmap
+import android.support.v4.media.session.MediaSessionCompat
+
+interface NotificationEngine {
+
+    fun updateNotification(session: MediaSessionCompat, currentArtworkBitmap: Bitmap?)
+}

@@ -28,6 +28,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.media.AudioAttributes as FrameworkAudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.os.Handler
+import android.os.Looper
+import androidx.media3.common.C
+import androidx.media3.common.AudioAttributes as AudioAttributes3
 
 class MyMusicService : MediaBrowserServiceCompat() {
 
@@ -37,6 +44,88 @@ class MyMusicService : MediaBrowserServiceCompat() {
     private val podcastList = mutableListOf<PodcastItem>()
     private val serviceScope = CoroutineScope(Dispatchers.Main)
     private var currentArtworkBitmap: Bitmap? = null
+
+    // Sınıf içinde (alanlar)
+    private lateinit var audioManager: AudioManager
+    private var audioFocusRequest: AudioFocusRequest? = null
+    private var wasPlayingBeforeFocusLossTransient: Boolean = false
+
+    // Audio focus listener
+    private val afChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                // Fokus geri geldi: volume normale çek, gerekiyorsa resume et
+                try {
+                    player.volume = 1.0f
+                    if (wasPlayingBeforeFocusLossTransient) {
+                        player.play()
+                        wasPlayingBeforeFocusLossTransient = false
+                    }
+                } catch (t: Throwable) { /* safe-guard */ }
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                // Geçici kayıp: pause et ama resume edebilmek için durumu sakla
+                try {
+                    wasPlayingBeforeFocusLossTransient = player.isPlaying
+                    if (player.isPlaying) player.pause()
+                } catch (t: Throwable) { /* safe-guard */ }
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                // Duck: düşük sesle devam et
+                try {
+                    player.volume = 0.15f
+                } catch (t: Throwable) { /* safe-guard */ }
+            }
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                // Kalıcı kayıp: dur ve focus'u bırak
+                try {
+                    wasPlayingBeforeFocusLossTransient = false
+                    if (player.isPlaying) player.pause()
+                } catch (t: Throwable) { /* safe-guard */ }
+                abandonAudioFocus()
+            }
+        }
+    }
+
+    // audio focus isteme (return true => focus alındı)
+    private fun requestAudioFocus(): Boolean {
+        audioManager = getSystemService(AudioManager::class.java)
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val focusAttr = FrameworkAudioAttributes.Builder()
+                .setUsage(FrameworkAudioAttributes.USAGE_MEDIA)
+                .setContentType(FrameworkAudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+
+            audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(focusAttr)
+                .setAcceptsDelayedFocusGain(true)
+                .setOnAudioFocusChangeListener(afChangeListener, Handler(Looper.getMainLooper()))
+                .build()
+
+            val res = audioManager.requestAudioFocus(audioFocusRequest!!)
+            res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        } else {
+            // Legacy
+            val res = audioManager.requestAudioFocus(
+                afChangeListener,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN
+            )
+            res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        }
+    }
+
+    private fun abandonAudioFocus() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioFocusRequest?.let { audioManager.abandonAudioFocusRequest(it) }
+                audioFocusRequest = null
+            } else {
+                audioManager.abandonAudioFocus(afChangeListener)
+            }
+        } catch (t: Throwable) { /* ignore */ }
+    }
 
     companion object {
         const val TAG = "MyMusicService"
@@ -73,7 +162,11 @@ class MyMusicService : MediaBrowserServiceCompat() {
 
     private val callback = object : MediaSessionCompat.Callback() {
         override fun onPlay() {
-            Log.d(TAG, "onPlay")
+            if (!requestAudioFocus()) {
+                // focus alınamadıysa çalmayı deneme
+                Log.d(TAG, "Audio focus not granted, abort play")
+                return
+            }
             player.play()
             session.isActive = true
         }
@@ -99,6 +192,7 @@ class MyMusicService : MediaBrowserServiceCompat() {
         override fun onStop() {
             Log.d(TAG, "onStop")
             player.stop()
+            abandonAudioFocus()
             session.isActive = false
         }
 
@@ -115,6 +209,34 @@ class MyMusicService : MediaBrowserServiceCompat() {
         override fun onSeekTo(position: Long) {
             player.seekTo(position)
         }
+
+        override fun onFastForward() {
+            // Standart fast-forward (ör. 15s)
+            Log.d(TAG, "onFastForward")
+            if (!this@MyMusicService::player.isInitialized) return
+            val pos = player.currentPosition + 15_000
+            val duration = player.duration
+            val max = if (duration > 0) duration else Long.MAX_VALUE
+            when {
+                pos < 0L -> player.seekToPreviousMediaItem()
+                pos > max -> player.seekToNextMediaItem()
+                else -> player.seekTo(0)
+            }
+        }
+
+        override fun onRewind() {
+            // Standart rewind (ör. 15s)
+            Log.d(TAG, "onRewind")
+            if (!this@MyMusicService::player.isInitialized) return
+            val pos = player.currentPosition - 15_000
+            val duration = player.duration
+            val max = if (duration > 0) duration else Long.MAX_VALUE
+            when {
+                pos < 0L -> player.seekToPreviousMediaItem()
+                pos > max -> player.seekToNextMediaItem()
+                else -> player.seekTo(0)
+            }
+        }
     }
 
     override fun onCreate() {
@@ -125,6 +247,14 @@ class MyMusicService : MediaBrowserServiceCompat() {
         loadPodcasts()
 
         player = ExoPlayer.Builder(this).build()
+        player = ExoPlayer.Builder(this).build()
+        val audioAttrs3 = AudioAttributes3.Builder()
+            .setUsage(C.USAGE_MEDIA)
+            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+            .build()
+// Eğer kendi focus yönetimini kullanıyorsan handleAudioFocus = false
+        player.setAudioAttributes(audioAttrs3, /* handleAudioFocus = */ false)
+        player.addListener(playerListener)
         player.addListener(playerListener)
 
         session = MediaSessionCompat(this, TAG)
@@ -144,6 +274,8 @@ class MyMusicService : MediaBrowserServiceCompat() {
                         PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
                         PlaybackStateCompat.ACTION_STOP or
                         PlaybackStateCompat.ACTION_SEEK_TO or
+                        PlaybackStateCompat.ACTION_FAST_FORWARD or
+                        PlaybackStateCompat.ACTION_REWIND or
                         PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
             )
 
@@ -380,13 +512,13 @@ class MyMusicService : MediaBrowserServiceCompat() {
             .setSmallIcon(R.drawable.ic_media_play)
             .setLargeIcon(currentArtworkBitmap)
             .setContentIntent(controller.sessionActivity)
-            // BİLDİRİMİ TAMAMEN KAPATILABİLİR YAPMA
-            .setOngoing(true)  // Her zaman açık kalır
+            // Bildirimi sürekli yap (foreground service)
+            .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setStyle(
                 androidx.media.app.NotificationCompat.MediaStyle()
                     .setMediaSession(session.sessionToken)
-                    .setShowActionsInCompactView(0, 1, 2)
+                    .setShowActionsInCompactView(0, 1, 2, 3, 4)
             )
             .addAction(
                 NotificationCompat.Action(
@@ -400,12 +532,32 @@ class MyMusicService : MediaBrowserServiceCompat() {
             )
             .addAction(
                 NotificationCompat.Action(
+                    R.drawable.ic_media_rew,
+                    "Rewind",
+                    MediaButtonReceiver.buildMediaButtonPendingIntent(
+                        this,
+                        PlaybackStateCompat.ACTION_REWIND
+                    )
+                )
+            )
+            .addAction(
+                NotificationCompat.Action(
                     if (player.isPlaying) R.drawable.ic_media_pause
                     else R.drawable.ic_media_play,
                     if (player.isPlaying) "Pause" else "Play",
                     MediaButtonReceiver.buildMediaButtonPendingIntent(
                         this,
                         PlaybackStateCompat.ACTION_PLAY_PAUSE
+                    )
+                )
+            )
+            .addAction(
+                NotificationCompat.Action(
+                    R.drawable.ic_media_ff,
+                    "Forward",
+                    MediaButtonReceiver.buildMediaButtonPendingIntent(
+                        this,
+                        PlaybackStateCompat.ACTION_FAST_FORWARD
                     )
                 )
             )
@@ -434,12 +586,65 @@ class MyMusicService : MediaBrowserServiceCompat() {
                 description = "Music playback controls"
                 setShowBadge(false)
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                // Kullanıcının bildirimi kapatmasını engelle
+                // Kullanıcının bildirimi kapatmasını engelleme kararını proje gereksinimine göre ayarla
                 setSound(null, null)
             }
 
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
+        }
+    }// --- SERVICE: Playlist uygulayan yardımcı fonksiyon ---
+    private fun setPlaylistFromIds(ids: ArrayList<String>?, startIndex: Int = 0, playImmediately: Boolean = true) {
+        if (ids.isNullOrEmpty()) return
+
+        // podcastList'de eşleşen öğeleri sırayla al
+        val matched = ids.mapNotNull { id -> podcastList.find { it.id == id } }
+
+        if (matched.isEmpty()) return
+
+        // player için MediaItem listesi oluştur
+        val mediaItems = matched.map { podcast ->
+            MediaItem.Builder()
+                .setUri(podcast.url)
+                .setMediaId(podcast.id)
+                .setMediaMetadata(
+                    androidx.media3.common.MediaMetadata.Builder()
+                        .setTitle(podcast.title)
+                        .setArtist(podcast.artist)
+                        .setArtworkUri(Uri.parse(podcast.imageUrl))
+                        .build()
+                )
+                .build()
+        }
+
+        player.setMediaItems(mediaItems, /* resetPosition= */ true)
+        // queue'yu MediaSession'e set et ki Android Auto queue'yu göstersin
+        val queue = matched.mapIndexed { index, podcast ->
+            val desc = MediaDescriptionCompat.Builder()
+                .setMediaId(podcast.id)
+                .setTitle(podcast.title)
+                .setSubtitle(podcast.artist)
+                .setIconUri(Uri.parse(podcast.imageUrl))
+                .setMediaUri(Uri.parse(podcast.url))
+                .build()
+            MediaSessionCompat.QueueItem(desc, index.toLong())
+        }
+        session.setQueue(queue)
+        session.setQueueTitle("Özel Çalma Listesi")
+
+        // Başlangıç konumuna atla
+        val safeIndex = startIndex.coerceIn(0, mediaItems.size - 1)
+        player.seekTo(safeIndex, 0L)
+        player.prepare()
+
+        if (playImmediately) {
+            player.play()
+            session.isActive = true
+        } else {
+            // sadece metadata & queue güncellensin
+            updateSessionMetadata()
+            updatePlaybackState()
+            updateNotification()
         }
     }
 
@@ -451,7 +656,8 @@ class MyMusicService : MediaBrowserServiceCompat() {
         session.release()
         currentArtworkBitmap?.recycle()
         currentArtworkBitmap = null
-        stopForeground(true)
+        stopForeground(STOP_FOREGROUND_DETACH)
+        abandonAudioFocus()
         super.onDestroy()
     }
 }
