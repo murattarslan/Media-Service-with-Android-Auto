@@ -21,7 +21,7 @@
             android:resource="@xml/automotive_app_desc" />
 
         <service
-            android:name=".service.MediaPlayerService"
+            android:name=".core.MediaPlayerService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="true">
             <intent-filter>

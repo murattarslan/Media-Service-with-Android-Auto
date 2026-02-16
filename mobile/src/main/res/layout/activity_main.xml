@@ -130,10 +130,25 @@
         android:id="@+id/start"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginHorizontal="24dp"
+        android:tint="@color/red"
         android:src="@android:drawable/ic_media_play"
+        app:layout_constraintStart_toStartOf="@id/albumArt"
+        app:layout_constraintTop_toBottomOf="@id/albumArt"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="fitCenter"
+        android:contentDescription="Play" />
+
+    <ImageButton
+        android:id="@+id/fav"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:padding="16dp"
+        android:src="@drawable/media3_icon_heart_unfilled"
+        android:tint="@color/red"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="@id/albumArt"
+        app:layout_constraintTop_toBottomOf="@id/albumArt"
         android:contentDescription="Play" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

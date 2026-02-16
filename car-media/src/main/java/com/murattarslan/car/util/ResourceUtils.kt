@@ -2,7 +2,12 @@ package com.murattarslan.car.util
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 
 object ResourceUtils {
 
@@ -16,5 +21,23 @@ object ResourceUtils {
             .appendPath(context.resources.getResourceTypeName(resId))
             .appendPath(context.resources.getResourceEntryName(resId))
             .build()
+    }
+
+    fun urlToBitmap(context: Context, imageUri: String, onResult: (Bitmap?) -> Unit){
+        Glide.with(context).asBitmap().load(imageUri).into(object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(
+                resource: Bitmap,
+                transition: Transition<in Bitmap>?
+            ) {
+                onResult(resource)
+            }
+            override fun onLoadCleared(placeholder: Drawable?) {
+                onResult(null)
+            }
+
+            override fun onLoadFailed(errorDrawable: Drawable?) {
+                onResult(null)
+            }
+        })
     }
 }
