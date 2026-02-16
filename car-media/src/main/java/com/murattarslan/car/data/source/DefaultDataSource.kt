@@ -1,6 +1,7 @@
 package com.murattarslan.car.data.source
 
 import com.murattarslan.car.domain.interfaces.DataSource
+import com.murattarslan.car.domain.models.DataState
 import com.murattarslan.car.domain.models.MediaItemModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,16 +10,30 @@ import kotlinx.coroutines.flow.update
 
 class DefaultDataSource: DataSource {
 
-    private val _mediaState: MutableStateFlow<List<MediaItemModel>> = MutableStateFlow(listOf())
-    override val mediaState: StateFlow<List<MediaItemModel>> = _mediaState.asStateFlow()
+    private val _mediaState: MutableStateFlow<DataState> = MutableStateFlow(DataState())
+    override val mediaState: StateFlow<DataState> = _mediaState.asStateFlow()
 
     override fun fetchMediaItems() {
-        _mediaState.update { mockMediaData2 }
+        _mediaState.update { state ->
+            state.copy(data = mockMediaData2, isLoading = true)
+        }
+        _mediaState.update { state ->
+            state.copy(data = mockMediaData2, isLoading = false)
+        }
     }
 
     override fun favorite(mediaId: String, isFavorite: Boolean) {
-        mockMediaData2.find { it.id == mediaId }?.isFavorite = isFavorite
-        _mediaState.update { mockMediaData2 }
+        _mediaState.update { state ->
+            state.copy(data = mockMediaData2, isLoading = true)
+        }
+        _mediaState.update { state ->
+            state.copy(
+                data = state.data.map {
+                    if (it.id == mediaId) it.copy(isFavorite = isFavorite) else it
+                },
+                isLoading = false
+            )
+        }
     }
 
     val mockMediaData2 = arrayListOf(

@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), OnMediaStateListener {
                 mediaService.onPause()
         }
         btnStart.setOnClickListener {
-            mediaService.onChange("track_music_1")
+            mediaService.onChange("track_music_2")
         }
         btnNext.setOnClickListener { mediaService.onNext() }
         btnPrev.setOnClickListener { mediaService.onPrev() }
@@ -146,13 +146,13 @@ class MainActivity : AppCompatActivity(), OnMediaStateListener {
         }
     }
 
-    override fun onPlayTrack(position: Long, lastPositionUpdateTime: Long, playbackSpeed: Float) {
+    override fun onPlayTrack(trackId: String?, position: Long, lastPositionUpdateTime: Long, playbackSpeed: Float) {
         runnable = createRunnable(position, lastPositionUpdateTime, playbackSpeed)
         runnable?.start()
         btnPlayPause.setImageResource(android.R.drawable.ic_media_pause)
     }
 
-    override fun onPauseTrack() {
+    override fun onPauseTrack(trackId: String?) {
         runnable?.cancel()
         btnPlayPause.setImageResource(android.R.drawable.ic_media_play)
     }

@@ -48,14 +48,9 @@ internal class DefaultPlayerController(
     private suspend fun collectState() {
         queueManager.queueState.collect { state ->
             prepare(state.queue, state.currentIndex)
-            if (player.currentMediaItemIndex != state.currentIndex) {
-                if (MediaService.isDebugEnable)
-                    Log.d(
-                        TAG,
-                        "syncPlayerWithQueue: Index mismatch. Seeking to ${state.currentIndex}"
-                    )
-                player.seekToDefaultPosition(state.currentIndex)
-            }
+            if (MediaService.isDebugEnable)
+                Log.d(TAG, "syncPlayerWithQueue: Index mismatch. Seeking to ${state.currentIndex}")
+            player.seekTo(state.currentIndex, 0)
             scope.launch { loadArtworkAndUpdateNotification() }
             updateState()
         }
@@ -294,6 +289,7 @@ internal class DefaultPlayerController(
     override fun playFromMediaId(mediaId: String) {
         if (MediaService.isDebugEnable)
             Log.i(TAG, "playFromMediaId: $mediaId")
+        updateState()
         queueManager.createQueue(mediaId)
     }
 

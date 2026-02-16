@@ -68,7 +68,7 @@ internal class DefaultSessionManager(
     override fun onDestroy() {
         if (MediaService.isDebugEnable) Log.d(TAG, "onDestroy: Destroying SessionManager")
         player.release()
-        MediaService.instance?.mediaStateListener?.forEach { listener -> listener.onPauseTrack() }
+        MediaService.instance?.mediaStateListener?.forEach { listener -> listener.onPauseTrack(player.playerState.value.track?.id) }
         session.isActive = false
         session.release()
     }
@@ -130,7 +130,7 @@ internal class DefaultSessionManager(
         }
     }
 
-    private fun fallbackService(state: PlayerState) {
+    fun fallbackService(state: PlayerState) {
         if (MediaService.isDebugEnable) Log.d(
             TAG,
             "updateMediaSession: Notifying mediaStateListeners"
@@ -142,13 +142,14 @@ internal class DefaultSessionManager(
             if (player.isPlaying())
                 mediaStateListener?.forEach { listener ->
                     listener.onPlayTrack(
+                        state.track?.id,
                         session.controller.playbackState.position,
                         session.controller.playbackState.lastPositionUpdateTime,
                         session.controller.playbackState.playbackSpeed
                     )
                 }
             else
-                mediaStateListener?.forEach { listener -> listener.onPauseTrack() }
+                mediaStateListener?.forEach { listener -> listener.onPauseTrack(state.track?.id) }
         }
     }
 

@@ -32,6 +32,7 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
 
     private val allItems = mutableListOf<MediaItemModel>()
     private val favItems = mutableListOf<MediaItemModel>()
+    private var currentTrackId = ""
 
     init {
         if (MediaService.isDebugEnable) Log.d(TAG, "init: Initializing DefaultQueueManager")
@@ -41,7 +42,7 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
             }
 
             override fun getCurrentTrack(): MediaItemModel? {
-                return getTrack()
+                return getTrack(currentTrackId)
             }
 
             override fun getMediaList(albumId: String): List<MediaItemModel> {
@@ -57,12 +58,12 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
             }
         }
         scope.launch {
-            dataSource.mediaState.collect {
+            dataSource.mediaState.collect { state ->
                 allItems.clear()
-                allItems.addAll(it)
+                allItems.addAll(state.data)
                 favItems.clear()
                 favItems.addAll(
-                    it.filter { track -> track.isFavorite }
+                    state.data.filter { track -> track.isFavorite }
                         .map { truck -> truck.copy(id = "${MediaConstants.FAV_PREFIX_KEY}${truck.id}") }
                 )
             }
@@ -103,12 +104,14 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
                     Log.w(TAG, "createQueue: trackId not found in map")
             } else {
                 val track = allItems[index]
+                var indexInCategory = allItems.filter { it.parentId == track.parentId }.indexOfFirst { it.id == trackId }
+                if (indexInCategory == -1) indexInCategory = 0
                 if (MediaService.isDebugEnable)
                     Log.d(TAG, "createQueue: Found in album=${track.parentId} at index=$index")
                 _queueState.update { state ->
                     state.copy(
                         queue = allItems.filter { it.parentId == track.parentId },
-                        currentIndex = index
+                        currentIndex = indexInCategory
                     )
                 }
             }
@@ -116,7 +119,8 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
     }
 
     override fun getTrack(id: String?): MediaItemModel? {
-        val track = allItems.find { it.id == id?.removePrefix(MediaConstants.FAV_PREFIX_KEY) }
+        if (id != null) currentTrackId = id
+        val track = allItems.find { it.id == currentTrackId.removePrefix(MediaConstants.FAV_PREFIX_KEY) }
         if (MediaService.isDebugEnable)
             Log.d(TAG, "getTrack id=$id, found=${track != null}")
         return track
@@ -151,12 +155,22 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
 
             MediaConstants.CATEGORY_ALL -> {
                 allItems.filter { it.parentId == null }
-                    .map { createBrowsableItem(it) }
+                    .map {
+                        if (it.mediaUri.isEmpty())
+                            createBrowsableItem(it)
+                        else
+                            createMediaItem(it, false)
+                    }
                     .toMutableList()
             }
 
             else -> allItems.filter { it.parentId == parentId }
-                .map { createMediaItem(it, false) }
+                .map {
+                    if (it.mediaUri.isEmpty())
+                        createBrowsableItem(it)
+                    else
+                        createMediaItem(it, false)
+                }
                 .toMutableList()
         }
     }
