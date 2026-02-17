@@ -12,7 +12,7 @@ interface OnMediaController {
     fun onRewind()
     fun onNext()
     fun onPrev()
-    fun onChange(trackId: String)
+    fun onChange(trackId: String, fromFavorite: Boolean = false)
     fun onChange(albumId: String, index: Int)
     fun onFavorite(track: MediaItemModel)
 

@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), OnMediaStateListener {
                 mediaService.onPause()
         }
         btnStart.setOnClickListener {
-            mediaService.onChange("track_music_2")
+            mediaService.onChange("track_music_2", false)
         }
         btnNext.setOnClickListener { mediaService.onNext() }
         btnPrev.setOnClickListener { mediaService.onPrev() }

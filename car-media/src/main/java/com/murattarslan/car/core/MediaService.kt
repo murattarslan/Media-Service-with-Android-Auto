@@ -188,9 +188,9 @@ class MediaService private constructor() {
      *
      * @param track The [MediaItemModel] to play.
      */
-    fun onChange(trackId: String) {
-        if (isDebugEnable) Log.i(TAG, "onChange: Switching to track: ${trackId}")
-        mediaController?.onChange(trackId)
+    fun onChange(trackId: String, fromFavorite: Boolean = false) {
+        if (isDebugEnable) Log.i(TAG, "onChange: Switching to track: ${trackId}, fromFavorite=$fromFavorite")
+        mediaController?.onChange(trackId, fromFavorite)
     }
 
     /**

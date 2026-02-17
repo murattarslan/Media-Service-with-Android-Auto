@@ -6,6 +6,7 @@ import com.murattarslan.car.core.MediaService
 import com.murattarslan.car.domain.interfaces.OnMediaController
 import com.murattarslan.car.domain.interfaces.PlayerController
 import com.murattarslan.car.domain.models.MediaItemModel
+import com.murattarslan.car.ui.constants.MediaConstants
 
 class SessionListener(val session: MediaSessionCompat, val player: PlayerController) : OnMediaController{
 
@@ -51,9 +52,12 @@ class SessionListener(val session: MediaSessionCompat, val player: PlayerControl
         player.skipToPrevious()
     }
 
-    override fun onChange(trackId: String) {
+    override fun onChange(trackId: String, fromFavorite: Boolean) {
         if (MediaService.isDebugEnable) Log.d(TAG, "OnMediaController: onChange trackId=${trackId}")
-        player.playFromMediaId(trackId)
+        if (fromFavorite)
+            player.playFromMediaId("${MediaConstants.FAV_PREFIX_KEY}$trackId")
+        else
+            player.playFromMediaId(trackId)
     }
 
     override fun onChange(albumId: String, index: Int) {

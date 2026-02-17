@@ -85,7 +85,7 @@ class DefaultDataSource: DataSource {
             description = "Yumuşak akustik tınılar",
             imageUri = "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=500",
             mediaUri = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
-            isFavorite = false
+            isFavorite = true
         ),
         MediaItemModel(
             id = "track_music_3",

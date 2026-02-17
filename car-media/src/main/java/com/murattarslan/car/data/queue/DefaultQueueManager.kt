@@ -88,7 +88,7 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
         if (MediaService.isDebugEnable) Log.d(TAG, "createQueue: trackId=$trackId")
         if (trackId.startsWith(MediaConstants.FAV_PREFIX_KEY)) {
             val index =
-                favItems.indexOfFirst { it.id == trackId.removePrefix(MediaConstants.FAV_PREFIX_KEY) }
+                favItems.indexOfFirst { it.id == trackId }
             if (MediaService.isDebugEnable)
                 Log.d(TAG, "createQueue: Favorite index detected as $index")
             if (index == -1) {
@@ -150,7 +150,7 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
             }
 
             MediaConstants.CATEGORY_FAVORITE -> {
-                favItems.map { createMediaItem(it, true) }.toMutableList()
+                favItems.map { createMediaItem(it) }.toMutableList()
             }
 
             MediaConstants.CATEGORY_ALL -> {
@@ -159,7 +159,7 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
                         if (it.mediaUri.isEmpty())
                             createBrowsableItem(it)
                         else
-                            createMediaItem(it, false)
+                            createMediaItem(it)
                     }
                     .toMutableList()
             }
@@ -169,7 +169,7 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
                     if (it.mediaUri.isEmpty())
                         createBrowsableItem(it)
                     else
-                        createMediaItem(it, false)
+                        createMediaItem(it)
                 }
                 .toMutableList()
         }
@@ -226,10 +226,10 @@ internal class DefaultQueueManager(private val dataSource: DataSource, scope: Co
         )
     }
 
-    private fun createMediaItem(track: MediaItemModel, isFavorite: Boolean = false)
+    private fun createMediaItem(track: MediaItemModel)
             : MediaBrowserCompat.MediaItem {
         val description = MediaDescriptionCompat.Builder()
-            .setMediaId(if (isFavorite) "${MediaConstants.FAV_PREFIX_KEY}${track.id}" else track.id)
+            .setMediaId(track.id)
             .setTitle(track.title)
             .setSubtitle(track.artist)
             .setDescription(track.artist)
